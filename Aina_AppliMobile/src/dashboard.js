@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { TouchableOpacity, ScrollView, FlatList, Text, StyleSheet, View } from 'react-native';
+import ModalNewNote from './modalNewNote';
 type Props = {};
 export default class Dashboard extends Component<Props> {
 
 
     state = {
-        notes: []
+        notes: [],
+        showModalNote: false
     }
     componentWillMount() {
         this.GetAllNotes()
@@ -39,9 +41,11 @@ export default class Dashboard extends Component<Props> {
     render() {
         return (
             <View style={styles.container}>
-                <View>
-                    <Text>Toutes les notes</Text>
+                <View style={styles.headerStyle}>
+                    
+                    <Text style={styles.menuItemStyle}>Modal Ici</Text>
                 </View>
+                <Text>Toutes les notes</Text>
                 <FlatList
                     data={this.state.notes}
                     keyExtractor={(item, index) => index.toString()}
@@ -68,7 +72,7 @@ export default class Dashboard extends Component<Props> {
 }
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#fff',
+        
         flexDirection: 'column'
     },
     listStyle: {
@@ -77,4 +81,16 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         margin: 1,
     },
+    headerStyle: {
+        flexDirection:'row',
+        
+        alignItems:'center',
+        justifyContent:'flex-end',
+        height:50
+    },
+
+    menuItemStyle: {
+        marginLeft:'auto',
+        backgroundColor:'red'
+    }
 });
