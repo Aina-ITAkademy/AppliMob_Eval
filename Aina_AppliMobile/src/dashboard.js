@@ -7,7 +7,9 @@ export default class Dashboard extends Component<Props> {
 
     state = {
         notes: [],
-        showModalNote: false
+        showModalNote: false,
+        showNoteView: false,
+        refresh: false
     }
     componentWillMount() {
         this.GetAllNotes()
@@ -16,7 +18,7 @@ export default class Dashboard extends Component<Props> {
         var IPAddr = '10.1.171.68'
         var mainRoot = 'http://' + IPAddr + ':3000'
         var routeAllNotes = mainRoot + '/notes'
-        fetch(routeAllNotes, { 
+        fetch(routeAllNotes, {
             method: 'GET',
             credentials: 'same-origin',
             headers: {
@@ -34,45 +36,74 @@ export default class Dashboard extends Component<Props> {
                 throw error;
             });
     }
-    notesTouch(lanote) {
+    showModalAdd() {
+        this.setState({ showModalNote: true })
+    }
 
+    getHours(StringDate) {
+        out = new Date(StringDate).getHours + new Date(StringDate).getMinutes
+    }
+    notesTouch(lanote) {
+        
     }
 
     render() {
         return (
             <View style={styles.container}>
                 <View style={styles.headerStyle}>
-                    
-                    <Text style={styles.menuItemStyle}>Modal Ici</Text>
+                    <TouchableOpacity
+                        onPress={() => this.showModalAdd()}
+                    >
+                        <Text style={styles.menuItemStyle}>
+                            Modal Ici
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-                <Text>Toutes les notes</Text>
-                <FlatList
-                    data={this.state.notes}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
 
-                        <TouchableOpacity
-                        style={styles.listStyle}
-                        onPress={() => this.notesTouch(item)}>
-                            <View >
-                                <View style={{ flexDirection: 'column', flexShrink: 1 }}>
-                                    <Text>{item.title}</Text>
-                                    <Text style={{ flex: 1, flexWrap: 'wrap' }}>{item.description}</Text>
-                                    <Text>Date de creation : {item.date_create}</Text>
-                                    <Text>Date de modification : {item.date_update}</Text>
-                                   
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                    )}>
-                </FlatList>
+
+                {(this.state.showModalNote) ? (
+                    <ModalNewNote setParentState={this.setState.bind(this)} />
+                ) : (
+                        <View>
+                            <TouchableOpacity onPress={this.GetAllNotes.bind(this)} style={styles.button1}>
+                                <Text>Rafraichir la liste</Text>
+                            </TouchableOpacity>
+                            <FlatList
+                                data={this.state.notes}
+                                extraData={this.state.refresh}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+
+                                    <TouchableOpacity
+                                        style={styles.listStyle}
+                                        onPress={() => this.notesTouch(item)}>
+                                        <View >
+                                            <View style={{ flexDirection: 'column', flexShrink: 1 }}>
+                                                <Text>{item.title}</Text>
+                                                <Text style={{ flex: 1, flexWrap: 'wrap' }}>{item.description}</Text>
+                                                {/* <Text>Date de creation : 
+                                            {new Date(item.date_create).getHours()}
+                                            h
+                                            {new Date(item.date_create).getMinutes()}
+                                            </Text> */}
+                                                <Text>Date de modification :
+                                                    {new Date(item.date_update).getHours()}h{new Date(item.date_update).getMinutes()}
+                                                     {/* le {new Date(item.date_update).getDate()}/{new Date(item.date_update).getMonth()}/{new Date(item.date_update).getFullYear()} */}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                )}>
+                            </FlatList>
+                        </View>
+                    )}
             </View>
         )
     }
 }
 const styles = StyleSheet.create({
     container: {
-        
+
         flexDirection: 'column'
     },
     listStyle: {
@@ -82,15 +113,21 @@ const styles = StyleSheet.create({
         margin: 1,
     },
     headerStyle: {
-        flexDirection:'row',
-        
-        alignItems:'center',
-        justifyContent:'flex-end',
-        height:50
+        flexDirection: 'row',
+
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        height: 50
     },
 
     menuItemStyle: {
-        marginLeft:'auto',
-        backgroundColor:'red'
-    }
+        marginLeft: 'auto',
+        backgroundColor: 'red'
+    },    
+    button1: {
+        backgroundColor: '#1e90ff',
+        padding: 10,
+        margin: 5,
+        borderRadius: 5,
+    },
 });

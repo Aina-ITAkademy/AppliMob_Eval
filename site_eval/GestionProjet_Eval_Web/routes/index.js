@@ -21,7 +21,7 @@ MongoClient.connect(url,
 
     /* GET Get All notes */
     router.get('/notes', function (req, res, next) {
-      DB.collection('notes').find({}).sort({ "_id": -1 }).toArray(function (err, notes) {
+      DB.collection('notes').find({}).sort({ "date_update": -1 }).toArray(function (err, notes) {
         if (err) throw err
         console.log(notes)
         res.json(notes)
